@@ -8,6 +8,6 @@
 EnableArrowTNT: true
 ExplosionMultiplier: 1.0
 AllowWorldList:
-  - World
-  - World_Nether
-  - World_The_End
+  - world
+  - world_nether
+  - world_the_end

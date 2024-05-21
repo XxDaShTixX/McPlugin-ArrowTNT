@@ -1,38 +1,45 @@
-package dev.dashti.mcpluginarrowtnt;
+package dev.dashti;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
+import java.io.File;
 
 public final class Plugin extends JavaPlugin implements Listener {
+
+    // Variables
+    private PluginInfoModel pluginInfoModel;
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+    }
 
     /**
      * Handles what heppens when plugin is enabled
      */
     @Override
     public void onEnable() {
-        // Register events
+
+        // Create all required config files
+        createFiles("config.yml", "players.yml", "plugin.yml");
+
+        pluginInfoModel = new PluginInfoModel(this); // Initialize PluginInfo
+        pluginInfoModel.PluginObject = this; // Reference the plugin object
+
+        // Register this class as listener
         getServer().getPluginManager().registerEvents(this, this);
+
+        // Register CommandExecutors
+        registerCommands();
+
+        // Register Listeners
+        registerEvents(this, new PluginListener(this)); //Register events
+
         // Log that plugin is enabled in console
-        getLogger().info(PluginHelper.getInstance().pluginInfo.PluginName + " Enabled!");
-
-        // If there was NO config file previously created, create one
-        if(!this.getConfig().getName().equals("config.yml")) {
-            this.getConfig().options().copyDefaults(true); //make copy from default
-            this.saveConfig(); //Save config in plugins folder
-        }
-        PluginHelper.getInstance().pluginInfo.FileConfig = this.getConfig(); // Reference the configuration file
-        PluginHelper.getInstance().pluginInfo.PluginObject = this; // Reference the plugin object
-
-        // Register Command Executors
-        org.bukkit.command.PluginCommand command = this.getCommand(PluginHelper.getInstance().pluginInfo.PluginCommand);
-        if(command != null){ command.setExecutor(new PluginCommand()); }
-
-        //Listeners
-        registerEvents(this, new PluginListener()); //Register events
+        getLogger().info(pluginInfoModel.PluginName + " Enabled!");
     }
 
     /**
@@ -40,7 +47,7 @@ public final class Plugin extends JavaPlugin implements Listener {
      */
     @Override
     public void onDisable() {
-        getLogger().info(PluginHelper.getInstance().pluginInfo.PluginName + " Disabled!");
+        getLogger().info(pluginInfoModel.PluginName + " Disabled!");
     }
 
     /**
@@ -51,6 +58,21 @@ public final class Plugin extends JavaPlugin implements Listener {
         for (Listener listener : listeners)
         {
             Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
+        }
+    }
+
+    public void registerCommands() {
+        // Register Command Executors
+        PluginCommand command = this.getCommand("ArrowTNT");
+        if(command != null){ command.setExecutor(new PluginCommandExecutor(this)); }
+    }
+
+    private void createFiles(String... fileNames) {
+        for (String fileName : fileNames) {
+            File file = new File(getDataFolder(), fileName);
+            if (!file.exists()) {
+                saveResource(fileName, false);
+            }
         }
     }
 }

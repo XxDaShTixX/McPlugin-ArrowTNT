@@ -1,131 +1,140 @@
-package dev.dashti.mcpluginarrowtnt;
+package dev.dashti;
 
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
 
 public class PluginHelper {
 
     // Variables
-    public PluginInfo pluginInfo = new PluginInfo(); // Plugin info
-    public boolean isEnabled = pluginInfo.FileConfig.getBoolean("EnableArrowTNT");
-    public double explosionMultiplier = pluginInfo.FileConfig.getDouble("ExplosionMultiplier");
+    private Plugin plugin;
+    private PluginInfoModel pluginInfoModel;
 
-    public List<String> worldList = pluginInfo.FileConfig.getStringList("AllowWorldList");
+    public boolean isEnabled;
+    public List<String> allowedWorlds;
+    public List<String> playerList;
 
-    // Creating the HashMap which stores the player and the ArrowTNT toggle boolean
-    public HashMap<Player, Boolean> ArrowTNTUserList = new HashMap<>();
-
-    // Singleton instance
-    private static PluginHelper instance = null;
+    private static PluginHelper instance;
 
     // Constructor
     // Here we will be creating private constructor
     // restricted to this class itself
-    private PluginHelper()
-    {
+    private PluginHelper(Plugin pl){
+        plugin = pl;
+        pluginInfoModel = new PluginInfoModel(plugin);
+        pluginInfoModel.PluginObject = plugin; // Reference the plugin object
     }
 
     // Static method to create instance of Singleton class
-    public static synchronized PluginHelper getInstance()
+    public static synchronized PluginHelper getInstance(Plugin pl)
     {
         if (instance == null)
-            instance = new PluginHelper();
+            instance = new PluginHelper(pl);
 
         return instance;
     }
 
-    /**
-     * Check if string can be parsed into a number
-     * @param player player to check status of
-     * @return true if player is allowed in the world
-     */
-    public boolean isPlayerInAllowedWorld(Player player)
-    {
-        boolean allowed = false;
+    public Object GetValueFromConfigFile(String configFileName, String pathToValue) {
+        File file = new File(plugin.getDataFolder(), configFileName);
 
-        for(String world : worldList)
-        {
-            //If player is in world that is in allowedWorld list
-            if(player.getWorld().getName().equalsIgnoreCase(world))
-            {
-                allowed = true;
+        if (!file.exists()) {
+            plugin.getLogger().warning("File '" + configFileName + "' not found");
+            return null;
+        }
+
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+        return config.get(pathToValue);
+    }
+
+    public List<String> GetListFromConfigFile(String configFileName, String pathToValue) {
+        File file = new File(plugin.getDataFolder(), configFileName);
+
+        if (!file.exists()) {
+            plugin.getLogger().warning("File '" + configFileName + "' not found");
+            return null;
+        }
+
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+        if(config.isList(pathToValue)){
+            return config.getStringList(pathToValue);
+        }else{
+            return null;
+        }
+    }
+
+    public void SetValueToConfig(String configFileName, String pathToValue, Object value) {
+        File file = new File(plugin.getDataFolder(), configFileName);
+        if (!file.exists()) {
+            plugin.getLogger().warning("File '" + configFileName + "' not found");
+            return;
+        }
+
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+        // Check if the value is a list
+        if (value instanceof List<?>) {
+            List<?> valueList = (List<?>) value;
+
+            // Retrieve the existing list from the config
+            List<String> existingList = config.getStringList(pathToValue);
+
+            // Add the new values to the list, avoiding duplicates
+            for (Object item : valueList) {
+                if (item instanceof String && !existingList.contains(item)) {
+                    existingList.add((String) item);
+                }
             }
+
+            // Set the updated list to the config
+            config.set(pathToValue, existingList);
+        } else {
+            config.set(pathToValue, value);
         }
 
-        return allowed;
+        try {
+            config.save(file);
+            UpdateLocalVariables();
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFileName, e);
+        }
     }
 
-    /**
-     * Check if string can be parsed into a number
-     * @param input the string to check
-     * @return true if it is an int
-     */
-    public boolean isIntParsable(String input)
-    {
-        boolean parsable = true;
+    public void SetListToConfig(String configFileName, String pathToValue, Object value) {
+        File file = new File(plugin.getDataFolder(), configFileName);
+        if (!file.exists()) {
+            plugin.getLogger().warning("File '" + configFileName + "' not found");
+            return;
+        }
 
-        try
-        {
-            Integer.parseInt(input);
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+        // Check if the value is a list
+        if (value instanceof List<?>) {
+            List<?> valueList = (List<?>) value;
+
+            // Set the new list to the config
+            config.set(pathToValue, valueList);
+        } else {
+            config.set(pathToValue, value);
         }
-        catch(NumberFormatException e)
-        {
-            parsable = false;
+
+        try {
+            config.save(file);
+            UpdateLocalVariables();
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFileName, e);
         }
-        return parsable;
     }
 
-    /**
-     * Check if string can be parsed into a number
-     * @param input the string to check
-     * @return true if a float
-     */
-    public boolean isFloatParsable(String input)
-    {
-        boolean parsable = true;
-
-        try
-        {
-            Float.parseFloat(input);
-        }
-        catch(NumberFormatException e)
-        {
-            parsable = false;
-        }
-        return parsable;
+    public void UpdateLocalVariables(){
+        isEnabled = Boolean.parseBoolean(GetValueFromConfigFile("config.yml", "EnableArrowTNT").toString());
+        allowedWorlds = GetListFromConfigFile("config.yml", "AllowWorldList");
+        playerList = GetListFromConfigFile("players.yml", "Active");
     }
-
-    /**
-     * Check if string can be parsed into a number
-     * @param input the string to check
-     * @return true if double
-     */
-    public boolean isDoubleParsable(String input)
-    {
-        boolean parsable = true;
-
-        try
-        {
-            Double.parseDouble(input);
-        }
-        catch(NumberFormatException e)
-        {
-            parsable = false;
-        }
-        return parsable;
-    }
-
-    /**
-     * Check if string can be parsed into a boolean
-     * @param input the string to check
-     * @return true if boolean
-     */
-    public boolean isBoolParsable(String input) {
-        return "true".equalsIgnoreCase(input) || "false".equalsIgnoreCase(input);
-    }
-
 }

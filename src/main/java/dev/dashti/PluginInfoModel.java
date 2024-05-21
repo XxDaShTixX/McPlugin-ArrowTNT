@@ -3,9 +3,9 @@ package dev.dashti;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PluginInfo {
+public class PluginInfoModel {
     JavaPlugin PluginObject = null;
-    FileConfiguration FileConfig = null;
+    //FileConfiguration FileConfig = null;
 
     String PluginName = "ArrowTNT"; // Plugin name
     String PluginCommand = "ArrowTNT"; // Command you enter to interact with plugin
@@ -18,13 +18,8 @@ public class PluginInfo {
 
     String[] PluginDependency = new String[]{""}; // Other plugins this plugin relies on
 
-    PluginInfo(Plugin pl){
+    PluginInfoModel(Plugin pl){
         PluginObject = pl;
-        FileConfig = pl.getConfig();
-    }
-
-    PluginInfo(){
-        PluginObject = null;
-        FileConfig = null;
+        //FileConfig = pl.getConfig();
     }
 }
