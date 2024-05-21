@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class PluginListener implements Listener {
 
     private final Plugin plugin;
-    private PluginInfoModel pluginInfoModel;
+    private final PluginInfoModel pluginInfoModel;
 
     public PluginListener(Plugin pl){
         plugin = pl;

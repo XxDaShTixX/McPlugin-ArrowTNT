@@ -12,7 +12,7 @@ public class PluginHelper {
 
     // Variables
     private final Plugin plugin;
-    private PluginInfoModel pluginInfoModel;
+    private final PluginInfoModel pluginInfoModel;
 
     public boolean isEnabled;
     public List<String> allowedWorlds;
