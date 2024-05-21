@@ -1,0 +1,13 @@
+#########################################
+# Config file for ArrowTN
+#
+# EnableArrowTNT: Enable or disable the plugin
+# Explosion Multiplier : Controls the size of explosion
+# WorldList : List of worlds to enable this plugin in
+#########################################
+EnableArrowTNT: true
+ExplosionMultiplier: 1.0
+AllowWorldList:
+  - World
+  - World_Nether
+  - World_The_End

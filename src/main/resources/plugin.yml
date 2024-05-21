@@ -1,0 +1,36 @@
+author: Ali Dashti
+website: https://dashti.dev/
+name: ArrowTNT
+version: 1.5
+api-version: 1.20.6
+main: dev.dashti.Plugin
+description: A Plugin for Minecraft
+commands:
+  ArrowTNT:
+    description: Overview of plugin
+    usage: /<command>
+    permission-message: You need to be STAFF to gain access to this command
+  ArrowTNT help:
+    description: Display available commands
+    usage: /<command>
+  ArrowTNT reload:
+    description: Reloads plugin
+    usage: /<command>
+  ArrowTNT setenable:
+    description: Enables or disables the plugin
+    usage: /<command>
+    permission-message: You need to be STAFF to gain access to this command
+  ArrowTNT setmult:
+    description: Set the explosion multiplier
+    usage: /<command>
+    permission-message: You need to be STAFF to gain access to this command
+permissions:
+  ArrowTNT.*:
+    description: All Permission for ArrowTNT
+    children:
+      ArrowTNT.Admin: true
+      ArrowTNT.Use: true
+  ArrowTNT.Admin:
+    description: Permission for configurations
+  ArrowTNT.Use:
+    description: Permission for using the plugin
