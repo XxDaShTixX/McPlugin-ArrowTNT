@@ -92,18 +92,18 @@ public class PluginCommandExecutor implements CommandExecutor {
                 }
                 else
                 {
-                    double newMult = 0;
+                    double newMulti;
 
                     //If input is double
                     try{
-                        newMult = Double.parseDouble(args[1]);
+                        newMulti = Double.parseDouble(args[1]);
                         player.sendMessage(MessageFormat.format("[{0}] Set multiplier to {1}",
                                 pluginInfoModel.PluginName,
-                                newMult
+                                newMulti
                         ));
 
                         // Add new value to config file
-                        PluginHelper.getInstance(plugin).SetValueToConfig("config.yml", "ExplosionMultiplier", newMult);
+                        PluginHelper.getInstance(plugin).SetValueToConfig("config.yml", "ExplosionMultiplier", newMulti);
                     }catch(NumberFormatException e){
                         player.sendMessage(MessageFormat.format("[{0}] Something went wrong: {1}",
                                 pluginInfoModel.PluginName,

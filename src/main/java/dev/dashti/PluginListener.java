@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 public class PluginListener implements Listener {
 
-    private Plugin plugin;
+    private final Plugin plugin;
     private PluginInfoModel pluginInfoModel;
 
     public PluginListener(Plugin pl){

@@ -11,7 +11,7 @@ import java.util.logging.Level;
 public class PluginHelper {
 
     // Variables
-    private Plugin plugin;
+    private final Plugin plugin;
     private PluginInfoModel pluginInfoModel;
 
     public boolean isEnabled;
