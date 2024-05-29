@@ -31,6 +31,6 @@ None
 - Give as much detail as possible.
 
 # 📃 Contributions
-If you are interested in contributing fixes or features, please read the [CONTRIBUTING.md](/CONTRIBUTING.md) guide first.
+If you are interested in contributing fixes or features, please read the [CONTRIBUTING.md](CONTRIBUTING.md) guide first.
 
 **Enjoy & Have Fun!**
