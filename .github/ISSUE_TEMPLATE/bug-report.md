@@ -1,7 +1,7 @@
 ---
 name: Bug Report
 about: "[Bug] '...' Not Working"
-title: "[BUG] '...' Not Working"
+title: "[BUG] Server Crashes When '...'"
 labels: 'Type: Bug'
 assignees: ''
 
